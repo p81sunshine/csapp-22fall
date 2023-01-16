@@ -43,13 +43,12 @@ queue_t *queue_new(void) {
 void queue_free(queue_t *q) {
     /* How about freeing the list elements and the strings? */
     /* Free queue structure */
-    while (q->head->next != NULL) {
+    while (q->head != NULL) {
         list_ele_t *tmp = q->head;
         q->head = q->head->next;
         free(tmp->value);
         free(tmp);
     }
-    free(q->head);
     free(q);
 }
 
@@ -149,17 +148,18 @@ bool queue_remove_head(queue_t *q, char *buf, size_t bufsize) {
     /* You need to fix up this code. */
     if (q == NULL || q->size == zero)
         return false;
+
     list_ele_t *tmp;
     tmp = q->head;
     q->head = q->head->next;
 
     if (buf != NULL) {
-        for (unsigned long i = 0; i < bufsize - 1; i++) {
-            buf[i] = tmp->value[i];
-        }
+        strncpy(buf, tmp->value, bufsize - 1);
         buf[bufsize - 1] = '\0';
     }
+
     free(tmp->value);
+
     free(tmp);
     q->size--;
     return true;
